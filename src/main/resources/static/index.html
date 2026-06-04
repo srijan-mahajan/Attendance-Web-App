@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Attendance Manager</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-decor">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="app-container">
+        <!-- Auth Section -->
+        <section id="auth-section" class="auth-card active">
+            <div class="card-header">
+                <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                <h2>Attendance System</h2>
+                <p>Manage your academic logs in real-time</p>
+            </div>
+            
+            <div class="tab-buttons">
+                <button id="login-tab-btn" class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+                <button id="register-tab-btn" class="tab-btn" onclick="switchAuthTab('register')">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="login-username"><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="login-username" required placeholder="Enter username">
+                </div>
+                <div class="input-group">
+                    <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="login-password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="submit-btn">Login <i class="fa-solid fa-right-to-bracket"></i></button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+                <div class="input-group">
+                    <label for="reg-username"><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="reg-username" required placeholder="Choose username">
+                </div>
+                <div class="input-group">
+                    <label for="reg-email"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="reg-email" required placeholder="Enter email address">
+                </div>
+                <div class="input-group">
+                    <label for="reg-password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="reg-password" required placeholder="Choose password">
+                </div>
+                <div class="input-group">
+                    <label for="reg-role"><i class="fa-solid fa-user-shield"></i> User Role</label>
+                    <select id="reg-role" required>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="reg-roll"><i class="fa-solid fa-id-card"></i> Roll Number (Students only)</label>
+                    <input type="text" id="reg-roll" placeholder="Enter roll number">
+                </div>
+                <div class="input-group">
+                    <label for="reg-branch"><i class="fa-solid fa-graduation-cap"></i> Branch (Students only)</label>
+                    <input type="text" id="reg-branch" placeholder="e.g. Computer Science">
+                </div>
+                <div class="input-group">
+                    <label for="reg-semester"><i class="fa-solid fa-list-ol"></i> Semester (Students only)</label>
+                    <input type="number" id="reg-semester" min="1" max="8" placeholder="e.g. 4">
+                </div>
+                <button type="submit" class="submit-btn">Register <i class="fa-solid fa-user-plus"></i></button>
+            </form>
+        </section>
+
+        <!-- Main Dashboard Section -->
+        <section id="dashboard-section" class="dashboard-panel">
+            <header class="dashboard-header">
+                <div class="logo-area">
+                    <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                    <h1>Attendance Dashboard</h1>
+                </div>
+                <div class="user-profile">
+                    <span id="user-display"><i class="fa-solid fa-circle-user"></i> Loading...</span>
+                    <button class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Logout</button>
+                </div>
+            </header>
+
+            <div class="dashboard-body">
+                <!-- Navigation Sidebar -->
+                <aside class="sidebar">
+                    <nav id="sidebar-nav">
+                        <!-- Dynamic nav options rendered via JS -->
+                    </nav>
+                </aside>
+
+                <!-- Content Area -->
+                <main class="content-area">
+                    <!-- Loading Spinner -->
+                    <div id="spinner" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+
+                    <!-- Admin View -->
+                    <div id="admin-view" class="view-panel">
+                        <div class="grid-2">
+                            <!-- Add User Card -->
+                            <div class="glass-card">
+                                <h3><i class="fa-solid fa-user-plus"></i> Create New User</h3>
+                                <form id="admin-create-user-form" onsubmit="adminCreateUser(event)">
+                                    <div class="input-group">
+                                        <input type="text" id="admin-u-username" required placeholder="Username">
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="email" id="admin-u-email" required placeholder="Email">
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="password" id="admin-u-password" required placeholder="Password">
+                                    </div>
+                                    <div class="input-group">
+                                        <select id="admin-u-role" required>
+                                            <option value="ROLE_STUDENT">Student</option>
+                                            <option value="ROLE_TEACHER">Teacher</option>
+                                            <option value="ROLE_ADMIN">Administrator</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" id="admin-u-roll" placeholder="Roll Number (Students only)">
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" id="admin-u-branch" placeholder="Branch (Students only)">
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="number" id="admin-u-semester" min="1" max="8" placeholder="Semester (Students only)">
+                                    </div>
+                                    <button type="submit" class="action-btn">Create User</button>
+                                </form>
+                            </div>
+
+                            <!-- Add Subject Card -->
+                            <div class="glass-card">
+                                <h3><i class="fa-solid fa-book"></i> Create New Subject</h3>
+                                <form id="admin-create-subject-form" onsubmit="adminCreateSubject(event)">
+                                    <div class="input-group">
+                                        <input type="text" id="admin-s-name" required placeholder="Subject Name">
+                                    </div>
+                                    <div class="input-group">
+                                        <select id="admin-s-teacher" required>
+                                            <option value="">Select Teacher...</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="number" id="admin-s-limit" value="75" min="0" max="100" placeholder="Attendance Limit % (Default 75)">
+                                    </div>
+                                    <button type="submit" class="action-btn">Create Subject</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Subject Enrollment Card -->
+                        <div class="glass-card mt-20">
+                            <h3><i class="fa-solid fa-circle-plus"></i> Enroll Student in Subject</h3>
+                            <form id="admin-enroll-form" onsubmit="adminEnrollStudent(event)" class="form-row">
+                                <select id="admin-e-subject" required>
+                                    <option value="">Select Subject...</option>
+                                </select>
+                                <select id="admin-e-student" required>
+                                    <option value="">Select Student...</option>
+                                </select>
+                                <button type="submit" class="action-btn inline-btn">Enroll Student</button>
+                            </form>
+                        </div>
+
+                        <!-- System Overview Tables -->
+                        <div class="grid-2 mt-20">
+                            <div class="glass-card">
+                                <h3>Users List</h3>
+                                <div class="table-scroll">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Roll No</th>
+                                                <th>Branch</th>
+                                                <th>Sem</th>
+                                                <th>Username</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-users-table"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="glass-card">
+                                <h3>Subjects List</h3>
+                                <div class="table-scroll">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>Teacher</th>
+                                                <th>Enrolled Students</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-subjects-table"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher View -->
+                    <div id="teacher-view" class="view-panel">
+                        <!-- Select Subject Selector -->
+                        <div class="selector-card glass-card">
+                            <div class="select-wrapper">
+                                <label for="teacher-subject-select">Select Active Subject:</label>
+                                <select id="teacher-subject-select" onchange="loadTeacherSubjectData()">
+                                    <option value="">Choose subject...</option>
+                                </select>
+                            </div>
+                            <div id="teacher-limit-controls" class="limit-controls hidden">
+                                <span>Current Limit: <strong id="current-limit-val">75%</strong></span>
+                                <input type="number" id="new-limit-input" min="0" max="100" placeholder="New %">
+                                <button onclick="updateSubjectLimit()" class="small-btn">Update Limit</button>
+                            </div>
+                        </div>
+
+                        <div id="teacher-content-panel" class="hidden">
+                            <!-- Dashboard Quick Stats -->
+                            <div class="stats-row mt-20">
+                                <div class="stat-card">
+                                    <i class="fa-solid fa-users icon"></i>
+                                    <div class="stat-info">
+                                        <span class="stat-num" id="stat-total-students">0</span>
+                                        <span class="stat-label">Enrolled Students</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card alert-card">
+                                    <i class="fa-solid fa-triangle-exclamation icon"></i>
+                                    <div class="stat-info">
+                                        <span class="stat-num" id="stat-low-attendance">0</span>
+                                        <span class="stat-label">Students Below Limit</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card download-card" onclick="downloadPdfReport()">
+                                    <i class="fa-solid fa-file-pdf icon"></i>
+                                    <div class="stat-info">
+                                        <span class="stat-action">Download PDF</span>
+                                        <span class="stat-label">Generate Attendance Report</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mark Attendance & Student Statistics Split -->
+                            <div class="grid-2 mt-20">
+                                <!-- Mark Attendance Panel -->
+                                <div class="glass-card">
+                                    <div class="card-header-flex">
+                                        <h3>Mark Daily Attendance</h3>
+                                        <input type="date" id="attendance-date" class="date-picker">
+                                    </div>
+                                    <form id="mark-attendance-form" onsubmit="submitAttendance(event)">
+                                        <div class="student-mark-list" id="student-attendance-list">
+                                            <!-- Dynamically filled with student names + present/absent switch -->
+                                        </div>
+                                        <button type="submit" class="submit-btn mt-20">Submit Attendance Logs <i class="fa-solid fa-circle-check"></i></button>
+                                    </form>
+                                </div>
+
+                                <!-- Student Statistics Panel -->
+                                <div class="glass-card">
+                                    <h3>Student Attendance Statistics</h3>
+                                    <div class="table-scroll stats-table">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Roll No</th>
+                                                    <th>Branch</th>
+                                                    <th>Sem</th>
+                                                    <th>Student</th>
+                                                    <th>Total Classes</th>
+                                                    <th>Attended</th>
+                                                    <th>Percentage</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="teacher-student-stats-table">
+                                                <!-- Student stats rows -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enroll Student Panel inside Teacher View -->
+                            <div class="glass-card mt-20">
+                                <h3><i class="fa-solid fa-user-plus"></i> Add New Student to Class</h3>
+                                <div class="tab-buttons mt-10">
+                                    <button class="small-btn tab-btn-sub active" id="btn-sub-enroll" onclick="switchTeacherEnrollTab('enroll')">Enroll Existing Student</button>
+                                    <button class="small-btn tab-btn-sub" id="btn-sub-create" onclick="switchTeacherEnrollTab('create')">Create & Enroll Student</button>
+                                </div>
+
+                                <div id="teacher-enroll-existing-panel" class="mt-15">
+                                    <form id="teacher-enroll-form" onsubmit="teacherEnrollStudent(event)" class="form-row">
+                                        <select id="teacher-student-enroll-select" required>
+                                            <option value="">Select student...</option>
+                                        </select>
+                                        <button type="submit" class="action-btn inline-btn">Enroll Student</button>
+                                    </form>
+                                </div>
+
+                                 <div id="teacher-create-student-panel" class="mt-15 hidden">
+                                     <form id="teacher-create-student-form" onsubmit="teacherCreateAndEnrollStudent(event)" class="form-row-multi" style="grid-template-columns: 1fr 1.5fr 1.5fr 1fr 1.5fr 1.5fr auto; gap: 8px;">
+                                         <input type="text" id="teacher-u-roll" required placeholder="Roll No">
+                                         <input type="text" id="teacher-u-branch" required placeholder="Branch">
+                                         <input type="number" id="teacher-u-semester" min="1" max="8" required placeholder="Sem">
+                                         <input type="text" id="teacher-u-username" required placeholder="Username">
+                                         <input type="email" id="teacher-u-email" required placeholder="Email">
+                                         <input type="password" id="teacher-u-password" required placeholder="Password">
+                                         <button type="submit" class="action-btn inline-btn">Create & Enroll</button>
+                                     </form>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student View -->
+                    <div id="student-view" class="view-panel">
+                        <div class="glass-card">
+                            <h3>My Subject Enrollments & Attendance Records</h3>
+                            <p class="desc-text">Below are the real-time attendance stats computed for your enrolled subjects.</p>
+                            <div class="table-scroll mt-15">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Teacher</th>
+                                            <th>Total Classes</th>
+                                            <th>Classes Present</th>
+                                            <th>Required %</th>
+                                            <th>My Attendance %</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="student-attendance-table">
+                                        <!-- Enrolled subjects list -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mentor View Panel -->
+                    <div id="mentor-view" class="view-panel">
+                        <div class="glass-card">
+                            <div class="card-header-flex">
+                                <div>
+                                    <h3><i class="fa-solid fa-graduation-cap"></i> Consolidated Mentor Overview</h3>
+                                    <p class="desc-text">Overall student attendance logs consolidated across all subjects.</p>
+                                </div>
+                                <button onclick="downloadOverallMentorReport()" class="action-btn"><i class="fa-solid fa-file-pdf"></i> Download Overall Report</button>
+                            </div>
+                            <div class="table-scroll mt-15">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Roll No</th>
+                                            <th>Branch</th>
+                                            <th>Sem</th>
+                                            <th>Student Name</th>
+                                            <th>Email Address</th>
+                                            <th>Subjects Breakdown (Percentage)</th>
+                                            <th>Consolidated Classes</th>
+                                            <th>Consolidated Present</th>
+                                            <th>Overall Attendance %</th>
+                                            <th>Status Alert</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mentor-overall-table">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </section>
+    </div>
+
+    <!-- SockJS and STOMP Over WebSocket CDNs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <!-- App JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
