@@ -46,6 +46,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- PostgreSQL Connector (for Render deployment) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- JWT (JSON Web Token) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
