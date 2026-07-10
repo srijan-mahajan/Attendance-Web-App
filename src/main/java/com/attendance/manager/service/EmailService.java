@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +16,7 @@ public class EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
+    @Async
     public void sendLowAttendanceAlert(String studentEmail, String studentName, String subjectName, double currentPercentage, double limit) {
         String subject = "Low Attendance Alert: " + subjectName;
         String text = String.format(
